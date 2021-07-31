@@ -1,6 +1,6 @@
 ;;; wisi-prj.el --- project integration -*- lexical-binding:t -*-
 ;;
-;; Copyright (C) 2019 - 2020  Free Software Foundation, Inc.
+;; Copyright (C) 2019 - 2021  Free Software Foundation, Inc.
 ;;
 ;; Author: Stephen Leake <stephen_leake@member.fsf.org>
 ;;
@@ -185,8 +185,9 @@ slow refresh operations may be skipped."
   nil)
 
 (cl-defgeneric wisi-xref-completion-table (xref project)
-  "Return a completion table of names defined in PROJECT, for navigating to the declarations.
-The table is an alist of (ANNOTATED-SYMBOL . LOC), where:
+  "Return a completion table of names defined in PROJECT,
+for navigating to the declarations.  The table is an alist
+of (ANNOTATED-SYMBOL . LOC), where:
 
 - ANNOTATED-SYMBOL is the simple name and possibly annotations
 such as function arguments, controlling type, containing package,
@@ -196,18 +197,20 @@ and line number.
 COLUMN).")
 
 (cl-defgeneric wisi-xref-completion-delim-regex (xref)
-  "Return the value for `completion-pcm--delim-wild-regex' to be used with `wisi-xref-completion-table'.")
+  "Return the value for `completion-pcm--delim-wild-regex'
+to be used with `wisi-xref-completion-table'.")
 
 (cl-defgeneric wisi-xref-completion-regexp (xref)
-  "Return a regular expression matching the result of completing with `wisi-xref-completion-table'.
-Group 1 must be the simple symbol; the rest of the item may be annotations.")
+  "Regular expression matching completion with `wisi-xref-completion-table'.
+Group 1 must be the simple symbol; the rest of the item may be
+annotations.")
 
 (cl-defgeneric wisi-xref-completion-at-point-table (xref project)
-  "Return a completion table of names defined in PROJECT, for `completion-at-point'.
+  "Return a completion table of names defined in PROJECT.
 The table is a simple list of symbols.")
 
 (cl-defgeneric wisi-xref-definitions (xref project item)
-  "Return all definitions (classwide) of ITEM (an xref-item), as a list of xref-items.")
+  "All definitions of ITEM (an xref-item), as a list of xref-items.")
 
 (cl-defgeneric wisi-xref-references (xref project item)
   "Return all references to ITEM (an xref-item), as a list of xref-items.")
@@ -427,7 +430,8 @@ FILENAME - absolute filename containing the identifier
 LINE - line number containing the identifier
 COLUMN - Emacs column of the start of the identifier
 
-Displays a buffer in compilation-mode giving locations of the parent type declarations.")
+Displays a buffer in compilation-mode giving locations of the
+parent type declarations.")
 
 (defun wisi-show-declaration-parents ()
   "Display the locations of the parent type declarations of the type identifier around point."
@@ -491,7 +495,7 @@ With prefix, keep previous references in output buffer."
     ))
 
 (cl-defgeneric wisi-xref-overriding (xref project &key identifier filename line column)
-  "Displays a buffer in compilation-mode giving locations of the overriding declarations.
+  "Displays a buffer giving locations of the overriding declarations.
 XREF    - dispatching object.
 PROJECT - a `wisi-prj' object.
 IDENTIFIER - an identifier or operator_symbol
@@ -514,7 +518,7 @@ COLUMN - Emacs column of the start of the identifier ")
     ))
 
 (cl-defgeneric wisi-xref-overridden (xref project &key identifier filename line column)
-  "Returns a list (FILE LINE COLUMN) giving the location of the overridden declaration.
+  "Returns the location of the overridden declaration as (FILE LINE COLUMN).
 XREF    - dispatching object.
 PROJECT - a `wisi-prj' object.
 IDENTIFIER - an identifier or operator_symbol
@@ -543,9 +547,9 @@ COLUMN - Emacs column of the start of the identifier")
 
 ;;;; wisi-prj specific methods
 
-(cl-defmethod project-roots ((_project wisi-prj))
-  ;; Not meaningful
-  nil)
+(cl-defmethod project-root ((project wisi-prj))
+   ;; Not meaningful, but some project functions insist on a valid directory
+   (car (wisi-prj-source-path project)))
 
 (cl-defmethod project-files ((project wisi-prj) &optional dirs)
   (let (result)
@@ -1240,7 +1244,8 @@ with \\[universal-argument]."
   ;; gds-mil_std_1553-utf.ads:252:25 - when wisi-xref-full-path is nil
   "\\(\\(?:.:\\\\\\|/\\)?[^:]*\\):\\([0-9]+\\):\\([0-9]+\\)"
   ;; 1                              2            3
-  "Regexp matching <file>:<line>:<column> where <file> is an absolute file name or basename.")
+  "Regexp matching <file>:<line>:<column>
+where <file> is an absolute file name or basename.")
 
 (defun wisi-xref-item (identifier prj)
   "Given IDENTIFIER, return an xref-item, with line, column nil if unknown.

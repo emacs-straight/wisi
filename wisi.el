@@ -7,8 +7,8 @@
 ;; Keywords: parser
 ;;  indentation
 ;;  navigation
-;; Version: 3.1.4
-;; package-requires: ((emacs "25.0") (seq "2.20"))
+;; Version: 3.1.5
+;; package-requires: ((emacs "25.3") (seq "2.20"))
 ;; URL: http://stephe-leake.org/ada/wisitoken.html
 ;;
 ;; This file is part of GNU Emacs.
@@ -212,7 +212,8 @@ If PARSE-RESULT is non-nil, use it instead of calling `syntax-ppss'."
    (cons 'face t)
    (cons 'navigate t)
    (cons 'indent t))
-  "Non-nil when parse is needed because text has changed - cleared when parse succeeds.")
+  "Non-nil when parse is needed due to text change.
+Cleared when parse succeeds.")
 
 (defun wisi-parse-try (&optional parse-action)
   (cdr (assoc (or parse-action wisi--parse-action) wisi--parse-try)))
@@ -1200,7 +1201,8 @@ failing; assumes user was editing code that is now syntactically
 correct. Must leave point at indentation of current line.")
 
 (defvar-local wisi-indent-failed nil
-  "Non-nil when wisi-indent-region fails due to parse failing; cleared when indent succeeds.")
+  "Non-nil when indent fails due to parse fail.
+Cleared when indent succeeds.")
 
 (defvar-local wisi-indent-region-fallback 'wisi-indent-region-fallback-default
   "Function to compute indent for lines in region when wisi parse fails.
