@@ -842,7 +842,8 @@ Source buffer is current."
 
 (cl-defun wisi-process-parse--prepare (parser parse-action &key nowait)
   "Check for parser busy and startup, mark parser busy, require parser process."
-  (unless (process-live-p (wisi-process--parser-process parser))
+  (unless (or (not (wisi-process--parser-process parser)) ;; not created yet
+	      (process-live-p (wisi-process--parser-process parser)))
     (wisi-parse-log-message parser "process died")
     (error "parser process died"))
 
@@ -1128,7 +1129,7 @@ Source buffer is current."
   (funcall action)
   (condition-case _err
       (wisi-process-parse--handle-messages parser)
-    ('wisi-file_not_found
+    (wisi-file_not_found
      (message "parsing buffer ...")
      (wisi-process-parse--send-incremental-parse parser t) ;; creates parse context
      (wisi-process-parse--wait parser)
@@ -1204,7 +1205,7 @@ Source buffer is current."
     (wisi-process-parse--send-incremental-parse parser full)
     (condition-case _err
 	(wisi-process-parse--handle-messages parser)
-      ('wisi-file_not_found
+      (wisi-file_not_found
        (message "parsing buffer ...")
        (wisi-process-parse--send-incremental-parse parser t)
        (wisi-process-parse--handle-messages parser)
